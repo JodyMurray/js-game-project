@@ -24,8 +24,8 @@ load(
 // global variables
 let lives = 3;
 
-const SPEED = 250;
-const JUMP_FORCE = 200;
+const SPEED = 120
+const JUMP_FORCE = 640
 
 setGravity(640);
 
@@ -82,9 +82,9 @@ scene("game", () => {
   const bg = add([fixed("background"), z(1)]);
   const level = addLevel(
     [
-      "       @                                =?     =?,                                             ",
+      "                                       =?     =?,                                             ",
       "       =?                            ====?          ,                                            ",
-      "                                    =?               ,                                          ",
+      "                   @                 =?               ,                                          ",
       "                  ==?               ?+?                 ,                                        ",
       "=++++++++++++++++++==++++++++?,================?,====================?                           ",
       "¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,   =????===?              ",
@@ -99,28 +99,28 @@ scene("game", () => {
       tiles: {
         "=": () => [
           sprite("ground1"),
-          area({ scale: 0.8 }),
+          area({ scale: 0.9 }),
           pos(-700, 550),
           body({ isStatic: true }),
           anchor("bot"),
         ],
         "+": () => [
           sprite("ground2"),
-          area({ scale: 0.8 }),
+          area({ scale: 0.9 }),
           pos(-700, 550),
           body({ isStatic: true }),
           anchor("bot"),
         ],
         "?": () => [
           sprite("ground3"),
-          area({ scale: 0.8 }),
+          area({ scale: 0.9 }),
           pos(-700, 550),
           body({ isStatic: true }),
           anchor("bot"),
         ],
         "¿": () => [
           sprite("ground4"),
-          area({ scale: 0.8 }),
+          area({ scale: 0.9 }),
           pos(-700, 550),
           body({ isStatic: true }),
           anchor("bot"),
@@ -217,11 +217,10 @@ scene("game", () => {
     yoda1.flipX = true;
   });
 
-  const defaultSpriteName = "default";
   const jumpSpriteName = "jump";
 
   onKeyDown("up", () => {
-    yoda1.move(0, -SPEED, JUMP_FORCE);
+    yoda1.jump(400);
 
     if (yoda1.flipX) {
       yoda1.use(sprite(jumpSpriteName, { flipX: true }));
