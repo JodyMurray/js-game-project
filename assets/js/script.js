@@ -14,7 +14,6 @@ let spr = null;
 
 load(
   new Promise((res) => {
-    // wait() won't work here because timers are not run during loading so we use setTimeout
     setTimeout(() => {
       res();
     }, 1000);
@@ -24,8 +23,8 @@ load(
 // global variables
 let lives = 3;
 
-const SPEED = 120
-const JUMP_FORCE = 640
+const SPEED = 320;
+const JUMP_FORCE = 640;
 
 setGravity(640);
 
@@ -65,8 +64,10 @@ loadSprite("yoda5", "sprites/yoda-5.png");
 loadSprite("yoda6", "sprites/yoda-6.png");
 loadSprite("yoda7", "sprites/yoda-7.png");
 loadSprite("yoda8", "sprites/yoda-8.png");
+loadSprite("spider", "sprites/enemy1.png");
 loadSprite("chicken", "sprites/chicken.png");
 loadSprite("jump", "sprites/jump.png");
+loadSprite("smoke", "sprites/smoke.png");
 loadSprite("yodaStop", "sprites/yoda-halt.png");
 loadSprite("ground1", "background/ground-1.png");
 loadSprite("ground2", "background/ground-2.png");
@@ -82,10 +83,10 @@ scene("game", () => {
   const bg = add([fixed("background"), z(1)]);
   const level = addLevel(
     [
-      "                                       =?     =?,                                             ",
-      "       =?                            ====?          ,                                            ",
-      "                   @                 =?               ,                                          ",
-      "                  ==?               ?+?                 ,                                        ",
+      "       =?                                =?     =?,                                             ",
+      "                                 !  ====?     !     ,                                            ",
+      "                   !                 =?               ,                                          ",
+      "          !        ==?               ?+?               @  ,                                        ",
       "=++++++++++++++++++==++++++++?,================?,====================?                           ",
       "¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,   =????===?              ",
       "¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿,¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿  =  ?====?   =????===?    ",
@@ -127,10 +128,18 @@ scene("game", () => {
         ],
         "@": () => [
           sprite("chicken"),
-          area({ scale: 2.2 }),
+          area({ scale: 2.4 }),
           pos(-660, 450),
           anchor("bot"),
+          "chicken",
+        ],
+        "!": () => [
+          sprite("spider", { scale: 8 }),
+          area({ scale: 1 }),
+          pos(-660, 550),
+          anchor("bot"),
           body({ isStatic: true }),
+          "spider",
         ],
       },
     }
@@ -144,7 +153,26 @@ scene("game", () => {
     body(),
     pos(-70, 20),
     doubleJump(0.5),
+    health(3),
   ]);
+
+  yoda1.onCollide("chicken", (chicken) => {
+    yoda1.health++;
+    destroy(chicken);
+    createLifeIcons();
+  });
+
+  yoda1.onCollide("spider", (spider) => {
+    yoda1.health--;
+
+    removeLifeIcon();
+  });
+
+  yoda1.onCollide((l) => {
+    if (l.is("spider")) {
+      destroy(l);
+    }
+  });
 
   let currentSpriteIndex = 0;
   const spriteChangeDelay = 0.04;
@@ -160,14 +188,12 @@ scene("game", () => {
   // Movements
 
   onLoading((progress) => {
-    // Black background
     drawRect({
       width: width(),
       height: height(),
       color: rgb(0, 0, 0),
     });
 
-    // A pie representing current load progress
     drawCircle({
       pos: center(),
       radius: 32,
