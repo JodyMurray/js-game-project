@@ -39,14 +39,14 @@ const spriteNames = [
   "yoda8",
 ];
 const spritePaths = [
-  "/sprites/yoda-1.png",
-  "/sprites/yoda-2.png",
-  "/sprites/yoda-3.png",
-  "/sprites/yoda-4.png",
-  "/sprites/yoda-5.png",
-  "/sprites/yoda-6.png",
-  "/sprites/yoda-7.png",
-  "/sprites/yoda-8.png",
+  "/assets/sprites/yoda-1.png",
+  "/assets/sprites/yoda-2.png",
+  "/assets/sprites/yoda-3.png",
+  "/assets/sprites/yoda-4.png",
+  "/assets/sprites/yoda-5.png",
+  "/assets/sprites/yoda-6.png",
+  "/assets/sprites/yoda-7.png",
+  "/assets/sprites/yoda-8.png",
 ];
 
 spriteNames.forEach((name, index) => {
@@ -157,22 +157,44 @@ scene("game", () => {
   ]);
 
   yoda1.onCollide("chicken", (chicken) => {
-    yoda1.health++;
+    // yoda1.health++;
     destroy(chicken);
     createLifeIcons();
   });
 
   yoda1.onCollide("spider", (spider) => {
+    // Reduce the health of the jumping sprite
     yoda1.health--;
-
     removeLifeIcon();
-  });
 
-  yoda1.onCollide((l) => {
-    if (l.is("spider")) {
-      destroy(l);
+    // Check if the jumping sprite's health reaches 0
+    if (yoda1.health <= 0) {
+      // Defeat the jumping sprite (perform defeat logic)
+      destroy(yoda1);
     }
   });
+
+
+
+
+
+  // When the jumping sprite lands on the ground (another sprite)
+  // yoda1.onGround("spider", (spider) => {
+  //   // Defeat the ground sprite (perform defeat logic)
+  //   destroy(spider);
+  // });
+
+  // yoda1.onCollide("spider", (spider) => {
+  //   yoda1.health--;
+
+  //   removeLifeIcon();
+  // });
+
+  // yoda1.onCollide((l) => {
+  //   if (yoda1.isJumping()) {
+  //     destroy(l);
+  //   }
+  // });
 
   let currentSpriteIndex = 0;
   const spriteChangeDelay = 0.04;
@@ -292,6 +314,7 @@ function createLifeIcons() {
     lifeIcon.classList.add("life-icon");
     lifeContainer.appendChild(lifeIcon);
   }
+  
 }
 
 function removeLifeIcon() {
